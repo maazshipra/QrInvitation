@@ -1,0 +1,8 @@
+{% extends 'base.html' %} {% block style %} {% endblock %} {% block content %}
+<h2 class="d-flex justify-content-center m-5">Feedback for {{ event.name }}</h2>
+<form method="post" action="{% url 'feedback' event.id %}" class="m-auto w-50">
+  {% csrf_token %}
+  <div class="mb-3">{{ form.as_p }}</div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{% endblock %}

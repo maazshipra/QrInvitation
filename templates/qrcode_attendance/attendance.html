@@ -1,0 +1,64 @@
+{% extends 'base.html' %} {% block style %} .table_td { text-align: center;
+vertical-align: middle; height: 100%; }{% endblock %} {% block content %}
+<div class="d-flex justify-content-end a gap-3 m-5">
+  <a href="{% url 'scan_qr_code' event.id %}"
+    ><button type="button" class="btn btn-outline-primary btn-lg">
+      <i class="fa-solid fa-qrcode"></i>
+      Verify Guest QR Code
+    </button></a
+  >
+</div>
+
+<h1 class="d-flex justify-content-center m-5">
+  Event : {{event.name | title}}
+</h1>
+<h1 class="d-flex justify-content-center m-5">
+  Attendance : {{attendance_count }}
+</h1>
+<div class="d-flex justify-content-center align-items-start gap-5 w-auto">
+  <div class="d-flex flex-column align-items-center justify-content-center">
+    <h4>Present Guest List</h4>
+    <table id="guesttable" class="table w-100" border="1">
+      <tr>
+        <th class="table_td ps-5 pe-5" scope="col">Name</th>
+        <th class="table_td ps-5 pe-5" scope="col">Time</th>
+
+        <!-- Add a new column for download buttons -->
+      </tr>
+
+      {% for attendances in attendance %}
+      <tr>
+        <td class="table_td ps-5 pe-5">{{ attendances.guest.name | title }}</td>
+        <td class="table_td ps-5 pe-5">
+          {{ attendances.timestamp|date:"D, d M Y H:i:s" }}
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <div class="d-flex flex-column align-items-center justify-content-center">
+    <h4 class="ps-3 pe-3">Absent Guest List</h4>
+    <table id="guesttable" class="table w-100" border="1">
+      <tr>
+        <th class="table_td ps-5 pe-5" scope="col">Name</th>
+
+        <!-- Add a new column for download buttons -->
+      </tr>
+      {% for remaining_guest in remaining_guests %}
+      <tr>
+        <td class="table_td ps-5 pe-5">{{ remaining_guest.name }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+<div class="d-flex justify-content-center m-5">
+  <a href="{% url 'show_guest' event.id %}"
+    ><button type="button" class="btn btn-primary btn-lg">
+      <i class="fa-solid fa-users"></i>
+      Show All Guest
+    </button></a
+  >
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'base.html' %} 
+{% block style %}
+.table_td {
+    text-align: center;
+    vertical-align: middle;
+    height: 100%;
+  }
+ {% endblock %} {% block content %}
+ <div class="d-flex justify-content-end me-5 mt-4">
+    <a href="{% url 'scan_qr_code' event.id %}"
+      ><button type="button" class="btn btn-outline-primary btn-lg">
+        <i class="fa-solid fa-qrcode"></i>  Verify Qr Code
+      </button></a
+    >
+  </div>
+ <h1 class="d-flex justify-content-center m-5"> Event : {{event.name}}</h1>
+
+ <h1 class="d-flex justify-content-center m-2"> Guest List</h1>
+
+<div class="d-flex justify-content-center">
+<div class="d-flex justify-content-between m-3 w-50">
+<div class="d-grid gap-2 d-md-flex justify-content-md-start ">
+<a href="{% url 'manage_guest' event.id %}"><button class="btn btn-outline-secondary">Manage Guests</button></a></div>
+
+<!-- Add download buttons -->
+<div class="d-grid gap-2 d-md-flex justify-content-md-end ">
+  {% if guest_count > 0 %}<a href="{% url 'download_all' event.id %}"><button class="btn btn-primary">  <i class="fa-solid fa-download"></i>  Download All</button></a>{% endif %}
+</div></div></div>
+<div class="d-flex justify-content-center">
+<table id="guesttable" class="table w-50 " border="1">
+  <tr >
+    <th class="table_td" scope="col">Name</th>
+    <th  class="table_td" scope="col">QR Code</th>
+    <th  class="table_td" scope="col">Action</th>
+    <!-- Add a new column for download buttons -->
+  </tr>
+
+  {% for guests in guest %}
+  <tr >
+    <td class="table_td" >{{ guests.name }}</td>
+    <td class="table_td">
+      <img src="{{ media_url }}{{ guests.qr_code }}" alt="" width="150px" />
+    </td>
+    <td class="table_td">
+      <a
+        href="{{ media_url }}{{ guests.qr_code }}"
+        download="{{ guests.name }}_QRCode.png"
+      >
+        <button class="btn btn-primary">
+            <i class="fa-solid fa-download"></i>  Download</i>
+        </button>
+      </a>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+</div>
+{% endblock %}

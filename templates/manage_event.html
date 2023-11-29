@@ -1,0 +1,106 @@
+{% extends 'base.html' %} {% block style %} {% endblock %} {% block content %}
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<div class="d-flex justify-content-end m-5">
+  <a href="{% url 'event_detail' event.id %}"
+    ><button type="button" class="btn btn-primary btn-lg">Show Event</button></a
+  >
+</div>
+
+<div class="d-flex flex-column align-items-center m-5">
+  <table>
+    <tr>
+      <td class="fs-2 p-2 text-secondary">Event Name</td>
+      <td class="fs-2 p-2 text-primary">{{ event.name }}</td>
+    </tr>
+    <tr>
+      <td class="fs-2 p-2 text-secondary">Location</td>
+      <td class="fs-2 p-2 text-primary">{{ event.location }}</td>
+    </tr>
+    <tr>
+      <td class="fs-2 p-2 text-secondary">DATE</td>
+      <td class="fs-2 p-2 text-primary">{{ event.date }}</td>
+    </tr>
+  </table>
+</div>
+
+<div class="d-flex justify-content-center align-items-center gap-2">
+  <button
+    type="button"
+    class="btn btn-outline-primary btn-lg"
+    d="updateEventOption"
+    onclick="updateEvent()"
+  >
+    <i class="fa-solid fa-pen-to-square"></i>
+    Update Event Name
+  </button>
+
+  <button
+    class="btn btn-outline-danger btn-lg"
+    id="removeEventOption"
+    onclick="removeEvent({{ event.id }})"
+  >
+    <i class="fa-regular fa-trash-can"></i>
+    Remove Event
+  </button>
+</div>
+<script>
+  function updateEvent() {
+    // Fetch the current event ID from the server
+    $.get("{% url 'get_current_event' event_id=event.id %}", function (data) {
+      console.log("update");
+      var eventId = data.id;
+      var newEventName = prompt("Enter updated event name:");
+
+      if (newEventName) {
+        $.ajax({
+          type: "POST",
+          url: "{% url 'update_event' event_id=0 %}".replace("0", eventId),
+          data: {
+            new_event_name: newEventName,
+            csrfmiddlewaretoken: "{{ csrf_token }}",
+          },
+          success: function () {
+            console.log("Update Event List called");
+            window.location.reload();
+            updateEventList();
+          },
+          error: function () {
+            console.log("Update event request failed");
+          },
+        });
+      }
+    });
+  }
+
+  function updateEventList() {
+    // Update the event list as needed
+    // For example, you can update a dropdown menu with the list of events
+    console.log("Event list updated");
+  }
+
+  // Attach click events to the options
+  $("#updateEventOption").click(updateEventOption);
+
+  $("#removeEventOption").click(removeEventOption);
+
+  function removeEvent(eventId) {
+    var confirmRemove = confirm("Are you sure you want to remove this event?");
+    if (confirmRemove) {
+      $.post(
+        "{% url 'remove_event' event_id=0 %}".replace("0", eventId),
+        { csrfmiddlewaretoken: "{{ csrf_token }}" },
+        function (data) {
+          if (data.success) {
+            // Redirect or update the page as needed
+            window.location.href = "{% url 'show_evnet' %}";
+          } else {
+            console.log("Remove event failed");
+          }
+        }
+      );
+    }
+  }
+</script>
+
+{% endblock %}

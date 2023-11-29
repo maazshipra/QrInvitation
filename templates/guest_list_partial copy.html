@@ -1,0 +1,33 @@
+<table id="guesttable" class="table w-50" border="1">
+  <tr>
+    <th class="table_td">Name</th>
+    <th class="table_td">QR Code</th>
+    <th class="table_td">Actions</th>
+  </tr>
+
+  {% for guest in guests %}
+  <tr>
+    <td class="table_td">{{ guest.name }}</td>
+    <td class="table_td">
+      <img src="{{ media_url }}{{ guest.qr_code}}" alt="" width="150px" />
+    </td>
+    <td class="table_td">
+      <!-- Button to update guest -->
+      <button onclick="updateGuest({{ guest.id }})" class="btn btn-warning">
+        <i class="fa-solid fa-pen-to-square"></i>
+        Update
+      </button>
+
+      <!-- Button to remove guest -->
+      <button
+        onclick="removeGuest({{ guest.id }})"
+        type="button"
+        class="btn btn-danger"
+      >
+        <i class="fa-regular fa-trash-can"></i>
+        Remove
+      </button>
+    </td>
+  </tr>
+  {% endfor %}
+</table>

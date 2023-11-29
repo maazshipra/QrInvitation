@@ -1,0 +1,40 @@
+{% extends 'base.html' %} {% block style %} .table_td { text-align: center;
+vertical-align: middle; height: 100%; } {% endblock %} {% block content %}
+<h1 class="d-flex justify-content-center m-5">EVENTS FEEDBACK QR</h1>
+
+<div class="d-flex justify-content-center">
+  <table class="table w-50" border="1">
+    <tr>
+      <th class="table_td">Event Name</th>
+      <th class="table_td">FeedBack QR Codes</th>
+      <th class="table_td">Download</th>
+    </tr>
+
+    {% for event_with_qr in events_with_qr %}
+    <tr>
+      <td class="table_td fs-5">{{ event_with_qr.event.name }}</td>
+
+      <td class="table_td">
+        <img
+          src="{{ event_with_qr.image.url }}"
+          alt="Feedback QR Code"
+          style="width: 300px; height: 300px"
+        />
+      </td>
+      <td class="table_td">
+        <form
+          method="post"
+          action="{% url 'download_qr' event_with_qr.event.id %}"
+          style="margin-top: 20px"
+        >
+          {% csrf_token %}
+          <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-download"></i> Download QR Code
+          </button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

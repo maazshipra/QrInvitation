@@ -1,0 +1,69 @@
+{% extends 'base.html' %} {% load static %} {% block link %}
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{% static 'signup/css/login_style.css'%}"
+/>
+<style></style>
+{% endblock %} {% block content %}
+<div class="body_container">
+  <div class="main">
+    <!-- sign In -->
+    <div class="container a-container" id="a-container">
+      <form class="form" id="b-form" method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        <h2 class="form_title title">Sign in to Website</h2>
+        <div class="form__icons">
+          <img class="form__icon" src="img/facebook.svg" alt="" />
+          <img
+            class="form__icon"
+            src="{% static 'signup/img/facebook.svg'%}"
+            alt=""
+          />
+          <img class="form__icon" src="{% static 'signup/img/linkedin.svg'%}" />
+          <img class="form__icon" src="{% static 'signup/img/twitter.svg'%}" />
+        </div>
+        <span class="form__span">or use your email account</span>
+
+        <div style="display: flex; width: 100%; justify-content: flex-start">
+          {% for message in messages %}
+          <p class="error_message">{{message}}*</p>
+          {% endfor%}
+        </div>
+
+        <input
+          class="form__input"
+          type="text"
+          placeholder="Username"
+          name="signin_name"
+          required
+        />
+        <input
+          class="form__input"
+          type="password"
+          placeholder="Password"
+          name="signin_pass"
+          required
+        />
+        <a class="form__link" href="">Forgot your password?</a>
+        <button class="form__button button submit">SIGN IN</button>
+      </form>
+    </div>
+
+    <div class="switch" id="switch-cnt">
+      <div class="switch__circle"></div>
+      <div class="switch__circle switch__circle--t"></div>
+      <div class="switch__container" id="switch-c1">
+        <h2 class="switch__title title">Hello Friend !</h2>
+        <p class="switch__description description">
+          Enter your personal details and start journey with us
+        </p>
+        <a href="{% url 'signup' %}"
+          ><button class="switch__button button switch-btn">SIGN UP</button></a
+        >
+      </div>
+    </div>
+  </div>
+</div>
+<!-- <script src="{% static 'Accounts/signup/js/script.js'%}"></script> -->
+{% endblock %}

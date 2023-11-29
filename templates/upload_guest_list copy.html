@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <title>Document</title>
+  </head>
+  <body>
+    <h1><a href="{% url 'home'  %}"> Home</a></h1>
+    <script>
+      $("#editButton").click(editbtn);
+
+      function editbtn() {
+        $.post(
+          "{% url 'edit' event_id=event.id %}",
+          {
+            csrfmiddlewaretoken: "{{ csrf_token }}",
+          },
+          function (data) {
+            // Assuming the server returns the updated guest list HTML
+            $("#guestList").html(data);
+          }
+        );
+      }
+
+      function addGuest() {
+        var guestName = prompt("Enter guest name:");
+        if (guestName) {
+          $.post(
+            "{% url 'add_guest' event_id=event.id %}",
+            {
+              guest_name: guestName,
+              csrfmiddlewaretoken: "{{ csrf_token }}",
+            },
+            function (data) {
+              // Assuming the server returns the updated guest list HTML
+              $("#guestList").html(data);
+            }
+          );
+        }
+      }
+
+      // Function to remove a guest from the list
+      function removeGuest(guestId) {
+        $.post(
+          "{% url 'remove_guest' event_id=event.id guest_id=0 %}".replace(
+            "0",
+            guestId
+          ),
+          { csrfmiddlewaretoken: "{{ csrf_token }}" },
+          function (data) {
+            // Assuming the server returns the updated guest list HTML
+            $("#guestList").html(data);
+          }
+        );
+      }
+
+      // Function to update a guest in the list
+      function updateGuest(guestId) {
+        var newGuestName = prompt("Enter updated guest name:");
+        if (newGuestName) {
+          $.ajax({
+            type: "POST",
+            url: "{% url 'update_guest' event_id=event.id guest_id=0 %}".replace(
+              "0",
+              guestId
+            ),
+            data: {
+              new_guest_name: newGuestName,
+              csrfmiddlewaretoken: "{{ csrf_token }}",
+            },
+            success: function (data) {
+              // Assuming the server returns the updated guest list HTML
+              $("#guestList").html(data);
+            },
+            error: function () {
+              console.log("Update request failed");
+            },
+          });
+        }
+      }
+
+      // guest update ends
+
+      // Function to update an event
+      function updateEvent(eventId) {
+        var newEventName = prompt("Enter updated event name:");
+        if (newEventName) {
+          $.ajax({
+            type: "POST",
+            url: "{% url 'update_event' event_id=0 %}".replace("0", eventId),
+            data: {
+              new_event_name: newEventName,
+              csrfmiddlewaretoken: "{{ csrf_token }}",
+            },
+            success: function () {
+              updateEventList();
+            },
+            error: function () {
+              console.log("Update event request failed");
+            },
+          });
+        }
+      }
+
+      // Function to remove an event
+      function removeEvent(eventId) {
+        var confirmRemove = confirm(
+          "Are you sure you want to remove this event?"
+        );
+        if (confirmRemove) {
+          $.post(
+            "{% url 'remove_event' event_id=0 %}".replace("0", eventId),
+            { csrfmiddlewaretoken: "{{ csrf_token }}" },
+            function (data) {
+              if (data.success) {
+                // Redirect or update the page as needed
+                window.location.href = "{% url 'home' %}";
+              } else {
+                console.log("Remove event failed");
+              }
+            }
+          );
+        } else {
+          console.log("Not Removed");
+        }
+      }
+
+      // Function to update the event list
+      function updateEventList() {
+        // Update the event list as needed
+        // For example, you can update a dropdown menu with the list of events
+        console.log("Event list updated");
+      }
+
+      // Attach click events to the options
+      $("#updateEventOption").click(updateEventOption);
+
+      function updateEventOption() {
+        $.get("{% url 'get_event' event_id=event.id %}", function (data) {
+          var eventId = data.id;
+          console.log(eventId);
+          if (eventId) {
+            updateEvent(eventId);
+          }
+        });
+      }
+
+      $("#removeEventOption").click(removeEventOption);
+
+      function removeEventOption() {
+        $.get("{% url 'get_event' event_id=event.id %}", function (data) {
+          var eventId = data.id;
+          console.log(eventId);
+          if (eventId) {
+            removeEvent(eventId);
+          }
+        });
+      }
+    </script>
+
+    <div>
+      <h3>Guest List:</h3>
+      <ul id="guestList">
+        {% for guest in guest_list %}
+        <li>
+          {{ guest.name }}
+          <a href="javascript:void(0);" onclick="removeGuest({{ guest.id }})"
+            >Remove</a
+          >
+          <a href="javascript:void(0);" onclick="updateGuest({{ guest.id }})"
+            >Update</a
+          >
+        </li>
+        {% endfor %}
+      </ul>
+      <!-- <button onclick="addGuest()">Add Guest</button> -->
+    </div>
+
+    <button type="button" onclick="editbtn()" id="editButton">
+      SHOW GEUST LIST
+    </button>
+    <!-- below code is working -->
+    <h1>Event : {{event_name}}</h1>
+    <h2>Upload Guest List</h2>
+    <form
+      method="post"
+      enctype="multipart/form-data"
+      action="{% url 'upload_guest_list' event_id=event.id %}"
+    >
+      {% csrf_token %} {{ guest_list_upload_form.as_p }}
+      <button type="submit">Upload Guest List</button>
+    </form>
+    <div>
+      <ol>
+        {% for name in guest_name %}
+        <li>{{name.name}}</li>
+        {% endfor %}
+      </ol>
+    </div>
+
+    <div>
+      <script></script>
+
+      <!-- ... (existing content) -->
+
+      <div>
+        <h3>Event Options:</h3>
+        <button onclick="updateEventOption()" id="updateEventOption">
+          Update Event
+        </button>
+        <button onclick="removeEventOption()" id="removeEventOption">
+          Remove Event
+        </button>
+      </div>
+    </div>
+  </body>
+</html>

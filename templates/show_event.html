@@ -1,0 +1,50 @@
+{% extends 'base.html' %} {% block style %} .table_td { text-align: center;
+vertical-align: middle; height: 100%; }{% endblock %} {% block content %}
+<h1 class="d-flex justify-content-center m-5">MY EVENTS</h1>
+<h5 class="d-flex justify-content-center mb-2">No of Events {{event_count}}</h5>
+<div class="d-flex justify-content-center">
+  <table class="table w-50" border="1">
+    <tr>
+      <th class="table_td">Event Name</th>
+      <th class="table_td">Actions</th>
+    </tr>
+    {% for event in events %}
+    <tr>
+      <td class="table_td fs-5">{{event.name | title }}</td>
+      <td class="table_td">
+        <a href="{% url 'scan_qr_code' event.id %}"
+          ><button type="button" class="btn btn-primary me-4">
+            <i class="fa-solid fa-qrcode"></i> Verify Qr Code
+          </button></a
+        >
+
+        <a href="{% url 'show_guest' event.id %}"
+          ><button type="button" class="btn btn-outline-primary me-4">
+            <i class="fa-solid fa-users"></i> Show Guests
+          </button></a
+        >
+        <a href="{% url 'event_detail' event.id %}"
+          ><button type="button" class="btn btn-outline-info me-4">
+            Show Details
+          </button></a
+        >
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+<!-- <ol>
+      {% for event in events %}
+      <li>
+        <h3>{{event}} </h3>
+        <h4><a href="{% url 'scan_qr_code' event.id %}"> Verify Qr Code</a></h4>
+        
+        <a href="{% url 'manage_guest' event.id %}"></p>Manage Guests</p></a>
+        <a href="{% url 'show_guest' event.id %}"></p>Show Guests</p></a>
+      
+        <a href="{% url 'event_detail' event.id %}"></p>Show Details</p></a>
+      </li>
+      {% endfor %}
+    </ol> -->
+
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'base.html' %} {% block style %} .card{ background-color: #FFF;
+width: auto; height: auto; box-shadow: 0 2px 3px 0 #01AEBB;border-radius: 15px;
+},{% endblock %} {% block content %}
+<div class="d-flex justify-content-between m-5">
+  <a href="{% url 'feedback_qr' event.id %}"
+    ><button type="button" class="btn btn-outline-primary btn-lg">
+      <i class="fa-solid fa-qrcode"></i>
+      QR Code for Feedback
+    </button></a
+  >
+  <a href="{% url 'manage_event' event.id %}"
+    ><button type="button" class="btn btn-primary btn-lg">
+      Manage Event
+    </button></a
+  >
+</div>
+<div class="d-flex flex-column align-items-center m-5">
+  <table>
+    <tr>
+      <td class="fs-2 p-2 text-secondary">Event Name</td>
+      <td class="fs-2 p-2 text-primary">{{ event.name }}</td>
+    </tr>
+    <tr>
+      <td class="fs-2 p-2 text-secondary">Location</td>
+      <td class="fs-2 p-2 text-primary">{{ event.location }}</td>
+    </tr>
+    <tr>
+      <td class="fs-2 p-2 text-secondary">DATE</td>
+      <td class="fs-2 p-2 text-primary">{{ event.date }}</td>
+    </tr>
+  </table>
+</div>
+<div class="d-flex justify-content-center align-items-center gap-2">
+  <a href="{% url 'scan_qr_code' event.id %}"
+    ><button type="button" class="btn btn-outline-primary btn-lg">
+      <i class="fa-solid fa-qrcode"></i>
+      Verify Guest QR Code
+    </button></a
+  >
+
+  <a href="{% url 'show_guest' event.id %}"
+    ><button type="button" class="btn btn-outline-primary btn-lg">
+      <i class="fa-solid fa-users"></i>
+      Guest
+    </button></a
+  >
+  <a href="{% url 'count_attendance' event.id %}"
+    ><button type="button" class="btn btn-outline-primary btn-lg">
+      <i class="fa-solid fa-clipboard-user"></i>
+      Attendance
+    </button></a
+  >
+</div>
+{% endblock %}

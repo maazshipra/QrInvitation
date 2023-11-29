@@ -1,0 +1,46 @@
+{% extends 'base.html' %} {% block style %} {% endblock %} {% block content %}
+<div class="d-flex justify-content-end me-5 mt-4">
+  <a href="{% url 'show_guest' event.id %}"
+    ><button type="button" class="btn btn-outline-primary btn-lg">
+      <i class="fa-solid fa-users"></i> Show Guest
+    </button></a
+  ></div>
+  <!-- below code is working -->
+  <h1 class="d-flex justify-content-center m-5">Event : {{event_name}}</h1>
+
+  <h2 class="d-flex justify-content-center">Upload Guest List</h2>
+  <form
+    method="post"
+    enctype="multipart/form-data"
+    action="{% url 'upload_guest_list' event_id=event.id %}"
+    class="m-auto w-50"
+  >
+    {% csrf_token %} {{ guest_list_upload_form.as_p }}
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+  <h3 class="d-flex justify-content-center m-2 text-muted">OR</h3>
+  <br />
+  <h2 class="d-flex justify-content-center">Add Guest Name</h2>
+  <form
+    method="post"
+    enctype="multipart/form-data"
+    action="{% url 'add_guest' event_id=event.id %}"
+    class="m-auto w-50"
+  >
+    {% csrf_token %}
+    <div class="mb-3" id="add_guest">
+      <label class="form-label">Name Guest Name</label>
+
+      <input
+        type="text"
+        id="guest_name"
+        name="guest_name"
+        class="form-control"
+        required
+      />
+    </div>
+    <button type="submit" class="btn btn-primary">Add Guest</button>
+  </form>
+
+  {% endblock %}
+</div>

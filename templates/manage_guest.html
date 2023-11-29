@@ -1,0 +1,182 @@
+{% extends 'base.html' %} {% block style %} .table_td { text-align: center;
+vertical-align: middle; height: 100%; }{% endblock %} {% block content %}
+<div class="d-flex justify-content-end me-5 mt-4">
+  <a href="{% url 'show_guest' event.id %}"
+    ><button type="button" class="btn btn-outline-primary btn-lg">
+      <i class="fa-solid fa-users"></i> Show Guest
+    </button></a
+  >
+</div>
+<h1 class="d-flex justify-content-center m-5">Event : {{event.name}}</h1>
+
+<h2 class="d-flex justify-content-center m-3">Manage Guest</h2>
+
+<!-- <table>
+      <tr>
+        <th>Name</th>
+        <th>QR Code</th>
+      </tr>
+
+      {% for guests in guest %}
+      <tr>
+        <td>{{guests.name}}</td>
+        <td>
+          <img src="{{media_url}}{{guests.qr_code}}" alt="" width="200" />
+        </td>
+      </tr>
+      {% endfor %}
+    </table> -->
+
+<!-- <a href="{% url 'upload_guest_list' event.id %}"></p>Add Guest</p> -->
+
+<div class="d-flex justify-content-center flex-column align-items-center">
+  <div class="d-flex justify-content-end align-items-end mb-2">
+    <a href="#add_guest"><button class="btn btn-primary">Add Guest</button></a>
+  </div>
+  <table id="guesttable" class="table w-50" border="1">
+    <tr>
+      <th class="table_td">Name</th>
+      <th class="table_td">QR Code</th>
+      <th class="table_td">Actions</th>
+    </tr>
+
+    {% for guests in guest %}
+    <tr>
+      <td class="table_td">{{ guests.name }}</td>
+      <td class="table_td">
+        <img src="{{ media_url }}{{ guests.qr_code}}" alt="" width="150px" />
+      </td>
+      <td class="table_td">
+        <!-- Button to update guest -->
+        <button onclick="updateGuest({{ guests.id }})" class="btn btn-warning">
+          <i class="fa-solid fa-pen-to-square"></i>
+          Update
+        </button>
+
+        <!-- Button to remove guest -->
+        <button
+          onclick="removeGuest({{ guests.id }})"
+          type="button"
+          class="btn btn-danger"
+        >
+          <i class="fa-regular fa-trash-can"></i>
+          Remove
+        </button>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+
+<!-- Form for adding a new guest -->
+<form
+  method="post"
+  enctype="multipart/form-data"
+  action="{% url 'add_guest' event_id=event.id %}"
+  class="m-auto w-50"
+>
+  {% csrf_token %}
+  <div class="mb-3" id="add_guest">
+    <label class="form-label">Name Guest Name</label>
+
+    <input
+      type="text"
+      id="guest_name"
+      name="guest_name"
+      class="form-control"
+      required
+    />
+  </div>
+  <button type="submit" class="btn btn-primary">Add Guest</button>
+</form>
+<h3 class="d-flex justify-content-center m-2 text-muted">OR</h3>
+<br />
+<h2 class="d-flex justify-content-center m-2">Upload Guest List</h2>
+<div class="mb-5">
+  <form
+    method="post"
+    enctype="multipart/form-data"
+    action="{% url 'upload_guest_list' event_id=event.id %}"
+    class="m-auto w-50"
+  >
+    {% csrf_token %} {{ guest_list_upload_form.as_p }}
+    <button type="submit" class="btn btn-primary">Upload Guest List</button>
+  </form>
+</div>
+<!-- JavaScript for handling actions -->
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+  // Function to update a guest
+  function updateGuest(guestId) {
+    var newGuestName = prompt("Enter updated guest name:");
+    if (newGuestName) {
+      $.ajax({
+        type: "POST",
+        url: "{% url 'update_guest' event_id=event.id guest_id=0 %}".replace(
+          "0",
+          guestId
+        ),
+        data: {
+          new_guest_name: newGuestName,
+          csrfmiddlewaretoken: "{{ csrf_token }}",
+        },
+        success: function () {
+          updateGuestList();
+        },
+        error: function () {
+          window.location.reload();
+          console.log("Update request failed");
+        },
+      });
+    }
+  }
+
+  // Function to remove a guest
+  function removeGuest(guestId) {
+    console.log(guestId);
+    $.post(
+      "{% url 'remove_guest' event_id=event.id guest_id=0 %}".replace(
+        "0",
+        guestId
+      ),
+
+      { csrfmiddlewaretoken: "{{ csrf_token }}" },
+      function () {
+        updateGuestList();
+      }
+    );
+    window.location.reload();
+  }
+  // Function to add a new guest
+  function addGuest() {
+    var newGuestName = prompt("Enter the name of the new guest:");
+    if (newGuestName) {
+      $.ajax({
+        type: "POST",
+        url: "{% url 'add_guest' event_id=event.id %}",
+        data: {
+          guest_name: newGuestName,
+          csrfmiddlewaretoken: "{{ csrf_token }}",
+        },
+        success: function () {
+          updateGuestList();
+        },
+        error: function () {
+          console.log("Add guest request failed");
+        },
+      });
+    }
+  }
+  // Function to update the guest list
+  function updateGuestList() {
+    $.get("{% url 'get_event' event_id=event.id %}", function (data) {
+      // console.log("update");
+      $("table").html(data);
+    });
+  }
+
+  // ... (existing content)
+</script>
+
+{% endblock %}

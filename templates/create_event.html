@@ -1,0 +1,31 @@
+{% extends 'base.html' %} {% block style %} {% endblock %} {% block content %}
+
+<h2 class="d-flex justify-content-center m-5">Create Event</h2>
+<!-- <form method="post" action="{% url 'create_event' %}">
+  {% csrf_token %} {{ event_form.as_p }}
+
+  <button type="submit">Create Event</button>
+</form> -->
+
+<form method="post" action="{% url 'create_event' %}" class="m-auto w-50">
+  {% csrf_token %}
+
+  <div class="mb-3">
+    <label class="form-label">Name</label>
+
+    {{ event_form.name }}
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Date</label>
+
+    {{ event_form.date }}
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Location</label>
+
+    {{ event_form.location }}
+  </div>
+
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{% endblock %}

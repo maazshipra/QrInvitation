@@ -1,0 +1,86 @@
+{% extends 'base.html' %} {% block style %} {% endblock %} {% block content %}
+<script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<div class="d-flex justify-content-end m-5">
+  <a href="{% url 'show_guest' event.id %}"
+    ><button type="button" class="btn btn-outline-primary btn-lg">
+      <i class="fa-solid fa-users"></i> Show Guests
+    </button></a
+  >
+</div>
+<h2 class="d-flex justify-content-center m-5">
+  Event : {{event.name | title}}
+</h2>
+
+<div class="d-flex justify-content-center mb-4">
+  <h2>Verify Guest Qr Codes</h2>
+</div>
+
+<div class="d-flex justify-content-center mb-5">
+  <video id="scanner" width="40%"></video>
+</div>
+<div id="event-id-container" data-event-id="{{ event.id }}"></div>
+<h3 class="d-flex justify-content-center m-3">
+  Attendance : {{attendance_count}}
+</h3>
+
+<!-- <h3 id="attendance-count" class="d-flex justify-content-center m-3">
+  Attendance : {{attendance_counts}}
+</h3> -->
+
+<div class="d-flex justify-content-center m-4">
+  <a href="{% url 'count_attendance' event.id %}">
+    <button type="button" class="btn btn-outline-primary btn-lg">
+      <i class="fa-solid fa-users"></i> Show Attendance
+    </button></a
+  >
+</div>
+<script>
+  let scanner = new Instascan.Scanner({
+    video: document.getElementById("scanner"),
+  });
+
+  let eventIdContainer = document.getElementById("event-id-container");
+  let eventId = eventIdContainer.dataset.eventId;
+
+  scanner.addListener("scan", function (content, event) {
+    // Send the scanned QR code to the server for verification
+
+    fetch(`/update_attendance/${eventId}/${content}`)
+      .then((response) => {
+        if (response.ok) {
+          window.location.reload();
+          return response.text();
+        }
+        throw new Error("Failed to update attendance.");
+      })
+
+      .then((data) => {
+        // Handle the response from the server as needed
+
+        console.log(data);
+      })
+
+      .catch((error) => {
+        // Handle errors
+        console.error(error);
+      });
+  });
+
+  Instascan.Camera.getCameras()
+    .then(function (cameras) {
+      if (cameras.length > 0) {
+        scanner.start(cameras[0]);
+      } else if (cameras.length > 1) {
+        scanner.start(cameras[1]);
+      } else {
+        console.error("No cameras found.");
+      }
+    })
+    .catch(function (e) {
+      console.error(e);
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base.html' %} {% block style %} {% endblock %} {% block content %}
+
+<h1 class="d-flex justify-content-center m-5">
+  Welcome To Qr Based Invitaion Web Application
+</h1>
+<div class="d-flex justify-content-center">
+  <a href="{% url 'create_event' %}"
+    ><button type="button" class="btn btn-primary btn-lg m-1 p-auto">
+      Create Event
+    </button></a
+  >
+
+  <br />
+  <a href="{% url 'show_evnet' %}"
+    ><button type="button" class="btn btn-secondary btn-lg m-1 p-auto">
+      Show Event
+    </button></a
+  >
+</div>
+{% endblock %}
+<!-- <h1>YOUR EVENTS</h1>
+
+    <ol>
+      {% for event in events %}
+      <li>
+        <h3>{{event}} </h3>
+        <h4><a href="{% url 'scan_qr_code' event.id %}"> Verify Qr Code</a></h4>
+        <p><a href="{% url 'upload_guest_list' event.id %}"></p>Add Guest</p></a> 
+        <a href="{% url 'manage_guest' event.id %}"></p>Manage Guests</p></a>
+        <a href="{% url 'show_guest' event.id %}"></p>Show Guests</p></a>
+      
+        <a href="{% url 'event_detail' event.id %}"></p>Show Details</p></a>
+      </li>
+      {% endfor %}
+    </ol>
+     -->
